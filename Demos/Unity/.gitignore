@@ -1,0 +1,45 @@
+# Unity Project Ignored Folders
+/.utmp/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/.consulo/
+
+# Unity Generated Files & Meta
+*.csproj
+*.unityproj
+*.sln
+*.tmp
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+*.log
+crashlytics-build.properties
+sysinfo.txt
+mono_crash.*
+
+# Unity Builds & Packages
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# Addressables
+/ServerData/
+/[Aa]ssets/StreamingAssets/aa*
+/[Aa]ssets/AddressableAssetsData/link.xml*
+/[Aa]ssets/Addressables_Temp*
+/[Aa]ssets/AddressableAssetsData/*/*.bin*
+
+# Odin Inspector (Zero-Setup Workflow - Enforce Attributes Only)
+/[Aa]ssets/Plugins/Sirenix/*
+!/[Aa]ssets/Plugins/Sirenix/Assemblies/
+/[Aa]ssets/Plugins/Sirenix/Assemblies/*
+!/[Aa]ssets/Plugins/Sirenix/Assemblies/Sirenix.OdinInspector.Attributes.dll

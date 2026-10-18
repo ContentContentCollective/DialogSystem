@@ -1,0 +1,70 @@
+# Define Unity macros
+[attr]unity-json        eol=lf linguist-language=json
+[attr]unity-yaml        merge=unityyamlmerge eol=lf linguist-language=yaml
+
+# Unity JSON & Metadata files
+*.asmdef                unity-json
+*.asmref                unity-json
+*.inputactions          unity-json
+
+# Unity UI Toolkit files
+*.tss                   text diff=css linguist-language=css
+*.uss                   text diff=css linguist-language=css
+*.uxml                  text linguist-language=xml linguist-detectable
+
+# Unity YAML files (Scene and Prefab Merging)
+*.anim                  unity-yaml
+*.asset                 unity-yaml
+*.controller            unity-yaml
+*.mat                   unity-yaml
+*.meta                  unity-yaml
+*.overrideController    unity-yaml
+*.physicMaterial        unity-yaml
+*.physicsMaterial2D     unity-yaml
+*.playable              unity-yaml
+*.prefab                unity-yaml
+*.preset                unity-yaml
+*.spriteatlas           unity-yaml
+*.spriteatlasv2         unity-yaml
+*.unity                 unity-yaml
+
+# Exclude from GitHub stats and diffs
+Assets/Plugins/**           linguist-generated
+Packages/packages-lock.json linguist-generated
+
+# Unity Packages
+*.unitypackage          lfs
+
+# Image Assets (Git LFS)
+*.png                   lfs
+*.psd                   lfs
+*.jpg                   lfs
+*.jpeg                  lfs
+*.gif                   lfs
+*.tga                   lfs
+*.tif                   lfs
+*.tiff                  lfs
+*.bmp                   lfs
+*.exr                   lfs
+*.webp                  lfs
+
+# Audio Assets (Git LFS)
+*.mp3                   lfs
+*.ogg                   lfs
+*.wav                   lfs
+*.aiff                  lfs
+*.aif                   lfs
+
+# 3D Model Assets (Git LFS)
+*.fbx                   lfs
+*.FBX                   lfs
+*.obj                   lfs
+*.blend                 lfs
+*.blend1                lfs
+
+# Font Assets (Git LFS)
+*.ttf                   lfs
+*.otf                   lfs
+
+# Exceptions
+LightingData.asset      binary

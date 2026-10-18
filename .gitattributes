@@ -1,0 +1,26 @@
+# Define macros
+[attr]lfs               filter=lfs diff=lfs merge=lfs -text
+
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Source code & documentation
+*.cs                    text diff=csharp
+*.md                    text
+*.txt                   text
+*.json                  text
+*.yml                   text
+*.yaml                  text
+
+# Compiled Libraries / Executables (Git LFS)
+*.dll                   lfs
+*.pdb                   lfs
+*.so                    lfs
+*.a                     lfs
+*.exe                   lfs
+
+# Compressed Archives & Packages
+*.zip                   lfs
+*.7z                    lfs
+*.tar                   lfs
+*.gz                    lfs
