@@ -1,11 +1,12 @@
+using ContentContent.Dialog.Core.Models;
 using System;
 using System.Collections.Generic;
 
 namespace ContentContent.Dialog.Core.Interfaces
 {
     /// <summary>
-    /// Presentation contract for rendering dialog state (Passive View).
-    /// Keeps the domain service decoupled from UI frameworks to allow isolated unit testing.
+    /// Presentation contract for rendering dialog state following the Passive View (MVP) pattern.
+    /// Utilizes atomic data binding to eliminate temporal coupling, followed by explicit visual execution commands.
     /// </summary>
     public interface IDialogView
     {
@@ -15,7 +16,7 @@ namespace ContentContent.Dialog.Core.Interfaces
         event Action<int> ChoiceSelected;
 
         /// <summary>
-        /// Shows the dialog view container on screen.
+        /// Displays the dialog view container on screen.
         /// </summary>
         void Show();
 
@@ -25,32 +26,27 @@ namespace ContentContent.Dialog.Core.Interfaces
         void Hide();
 
         /// <summary>
-        /// Updates the speaker nameplate text, or hides the nameplate if the speaker name is empty.
+        /// Atomically binds the complete dialog payload to the view.
+        /// This acts as the lifecycle trigger for the view to archive previous history, 
+        /// clear stale choice data, and pre-calculate upcoming layout requirements.
         /// </summary>
-        /// <param name="speakerName">The display name of the active speaker.</param>
-        void SetSpeaker(string speakerName);
+        /// <param name="line">The immutable dialog payload for the current turn.</param>
+        void BindLine(DialogLine line);
 
         /// <summary>
-        /// Assigns the full target string upfront so the view can pre-calculate text layout and word wrapping.
+        /// Triggers the visual rendering for static layout elements such as the speaker nameplate and container borders.
         /// </summary>
-        /// <param name="text">The complete dialog line text to prepare for rendering.</param>
-        void SetFullText(string text);
+        void RenderStaticLayout();
 
         /// <summary>
-        /// Reveals a specific count of characters from the pre-assigned full text without reflowing layout.
+        /// Reveals a specific count of characters from the bound text payload without reflowing the layout.
         /// </summary>
-        /// <param name="characterCount">The number of visible characters to reveal from the start of the line.</param>
-        void RevealCharacters(int characterCount);
+        /// <param name="visibleCharacters">The number of visible characters to reveal from the start of the line.</param>
+        void RevealCharacters(int visibleCharacters);
 
         /// <summary>
-        /// Renders interactive choice buttons for the provided choice labels.
+        /// Renders interactive choice buttons if the bound payload contains choices.
         /// </summary>
-        /// <param name="choices">Ordered list of localized choice strings to display.</param>
-        void DisplayChoices(IReadOnlyList<string> choices);
-
-        /// <summary>
-        /// Removes all active choice buttons and hides the choices container.
-        /// </summary>
-        void ClearChoices();
+        void RenderChoices();
     }
 }

@@ -6,11 +6,13 @@ namespace ContentContent.Dialog.Core.Models
     /// <summary>
     /// Immutable value payload representing a single dialog turn.
     /// Implemented as a readonly struct to prevent heap allocations during conversation progression.
+    /// This ensures the presentation layer (Passive View) cannot mutate the narrative state.
     /// </summary>
     public readonly struct DialogLine
     {
         /// <summary>
-        /// Gets the name of the speaker for this dialog line. Guaranteed non-null; returns an empty string for narration.
+        /// Gets the name of the speaker for this dialog line. 
+        /// Guaranteed non-null; returns an empty string for narration.
         /// </summary>
         public string Speaker { get; }
 

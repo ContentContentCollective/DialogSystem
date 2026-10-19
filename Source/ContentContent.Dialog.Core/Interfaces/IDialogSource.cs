@@ -1,11 +1,11 @@
-using System;
 using ContentContent.Dialog.Core.Models;
+using System;
 
 namespace ContentContent.Dialog.Core.Interfaces
 {
     /// <summary>
-    /// Abstracts the narrative data stream from the presentation controller.
-    /// Implement this interface to adapt external dialog engines (such as Ink) without modifying core logic.
+    /// Abstracts the narrative data stream from the core presentation orchestrator.
+    /// Implement this interface to adapt external dialog engines (such as Ink) without modifying core domain logic.
     /// </summary>
     public interface IDialogSource
     {
@@ -16,7 +16,8 @@ namespace ContentContent.Dialog.Core.Interfaces
         bool CanContinue { get; }
 
         /// <summary>
-        /// Retrieves the next line of dialog and advances the internal narrative cursor.
+        /// Retrieves the next line of dialog, evaluates any internal variables/conditions, 
+        /// and advances the internal narrative cursor.
         /// </summary>
         /// <returns>The immutable <see cref="DialogLine"/> payload for the current turn.</returns>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="CanContinue"/> is false.</exception>

@@ -63,7 +63,7 @@ namespace ContentContent.Dialog.Core.Services
         /// <summary>
         /// Starts a new dialog session using the provided narrative source.
         /// </summary>
-        /// <param name="source">The narrative state machine or data stream.</param>
+        /// <param name="source">The narrative data source driving the conversation.</param>
         /// <exception cref="ArgumentNullException">Thrown if the source is null.</exception>
         public void StartDialog(IDialogSource source)
         {
@@ -98,7 +98,6 @@ namespace ContentContent.Dialog.Core.Services
 
             CancelTypewriter();
             _inputProvider.Disable();
-            _view.ClearChoices();
             _view.Hide();
 
             _currentSource = null;
@@ -137,7 +136,6 @@ namespace ContentContent.Dialog.Core.Services
 
             if (_activeLine.HasChoices)
             {
-                // Must select a choice; generic advancement is blocked.
                 return;
             }
 
@@ -160,7 +158,6 @@ namespace ContentContent.Dialog.Core.Services
 
             if (_activeLine.HasChoices && choiceIndex >= 0 && choiceIndex < _activeLine.Choices.Count)
             {
-                _view.ClearChoices();
                 _currentSource.SelectChoice(choiceIndex);
                 AdvanceToNextNode();
             }
@@ -175,18 +172,17 @@ namespace ContentContent.Dialog.Core.Services
             }
 
             _activeLine = _currentSource.GetNextLine();
-
-            // Fire and forget the async typewriter workflow. 
-            // The Task acts as a safe coroutine replacement in pure C#.
             _ = PlayLineSequenceAsync(_activeLine);
         }
 
         private async Task PlayLineSequenceAsync(DialogLine line)
         {
-            _view.SetSpeaker(line.Speaker);
-            _view.SetFullText(line.Text);
+            // Phase 1: Atomic Data Binding
+            _view.BindLine(line);
+
+            // Phase 2: Visual Execution
+            _view.RenderStaticLayout();
             _view.RevealCharacters(0);
-            _view.ClearChoices();
 
             _isTypewriting = true;
             _typewriterCancellationTokenSource = new CancellationTokenSource();
@@ -221,7 +217,7 @@ namespace ContentContent.Dialog.Core.Services
 
                 if (line.HasChoices)
                 {
-                    _view.DisplayChoices(line.Choices);
+                    _view.RenderChoices();
                 }
             }
         }

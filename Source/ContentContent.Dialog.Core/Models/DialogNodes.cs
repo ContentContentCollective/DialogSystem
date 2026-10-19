@@ -5,13 +5,13 @@ namespace ContentContent.Dialog.Core.Models
 {
     /// <summary>
     /// Engine-agnostic graph node representing a single step in a branching conversation.
-    /// Converts into an immutable <see cref="DialogLine"/> payload on demand.
+    /// Contains routing logic and acts as the structural blueprint before being evaluated into a presentation payload.
     /// </summary>
     [Serializable]
-    public readonly struct DialogNode
+    public class DialogNode
     {
         /// <summary>
-        /// Sentinel node index (-1) indicating that the conversation terminates after the active node.
+        /// Sentinel node index (-1) indicating that the conversation terminates after the active node or choice completes.
         /// </summary>
         public const int EndConversationIndex = -1;
 
@@ -43,7 +43,7 @@ namespace ContentContent.Dialog.Core.Models
         }
 
         /// <summary>
-        /// Gets the index of the next node to transition to when no choices are present.
+        /// Gets the index of the next node to transition to when no choices are present, or <see cref="EndConversationIndex"/> to terminate.
         /// </summary>
         public int NextNodeIndex
         {
@@ -65,13 +65,13 @@ namespace ContentContent.Dialog.Core.Models
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DialogNode"/> struct.
+        /// Initializes a new instance of the <see cref="DialogNode"/> class.
         /// </summary>
-        /// <param name="speaker">The speaker name.</param>
-        /// <param name="text">The dialog body text. Cannot be null.</param>
-        /// <param name="nextNodeIndex">The target node index for linear progression.</param>
+        /// <param name="speaker">The speaker name. Null values are sanitized to <see cref="string.Empty"/>.</param>
+        /// <param name="text">The dialog body text. Cannot be <c>null</c>.</param>
+        /// <param name="nextNodeIndex">The target node index for linear progression, or <see cref="EndConversationIndex"/>.</param>
         /// <param name="choices">Optional collection of branching choices for this node.</param>
-        /// <exception cref="ArgumentNullException">Thrown when text is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <c>null</c>.</exception>
         public DialogNode(
             string speaker,
             string text,
@@ -82,26 +82,6 @@ namespace ContentContent.Dialog.Core.Models
             _text = text ?? throw new ArgumentNullException(nameof(text));
             _nextNodeIndex = nextNodeIndex;
             _choices = choices ?? Array.Empty<DialogChoice>();
-        }
-
-        /// <summary>
-        /// Constructs the runtime <see cref="DialogLine"/> value payload from this node's data.
-        /// </summary>
-        /// <returns>A new <see cref="DialogLine"/> containing this node's speaker, text, and extracted choice labels.</returns>
-        public DialogLine ToDialogLine()
-        {
-            if (_choices == null || _choices.Count == 0)
-            {
-                return new DialogLine(Speaker, Text);
-            }
-
-            string[] choiceLabels = new string[_choices.Count];
-            for (int i = 0; i < _choices.Count; i++)
-            {
-                choiceLabels[i] = _choices[i].Text;
-            }
-
-            return new DialogLine(Speaker, Text, choiceLabels);
         }
     }
 }
