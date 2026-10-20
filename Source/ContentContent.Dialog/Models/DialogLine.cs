@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ContentContent.Dialog.Core.Models
+namespace ContentContent.Dialog
 {
     /// <summary>
     /// Immutable value payload representing a single dialog turn.
@@ -11,7 +11,7 @@ namespace ContentContent.Dialog.Core.Models
     public readonly struct DialogLine
     {
         /// <summary>
-        /// Gets the name of the speaker for this dialog line. 
+        /// Gets the name of the speaker for this dialog line.
         /// Guaranteed non-null; returns an empty string for narration.
         /// </summary>
         public string Speaker { get; }
@@ -33,22 +33,22 @@ namespace ContentContent.Dialog.Core.Models
         {
             get
             {
-                return Choices != null && Choices.Count > 0;
+                return this.Choices != null && this.Choices.Count > 0;
             }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogLine"/> struct.
         /// </summary>
-        /// <param name="speaker">The speaker name. If null, defaults to an empty string.</param>
-        /// <param name="text">The body text of the dialog line. Cannot be null.</param>
-        /// <param name="choices">Optional list of branching choice labels. If null, defaults to an empty array.</param>
-        /// <exception cref="ArgumentNullException">Thrown when text is null.</exception>
-        public DialogLine(string speaker, string text, IReadOnlyList<string> choices = null)
+        /// <param name="speaker">The speaker name. If <c>null</c>, defaults to <see cref="string.Empty"/>.</param>
+        /// <param name="text">The body text of the dialog line. Cannot be <c>null</c>.</param>
+        /// <param name="choices">Optional list of branching choice labels. If <c>null</c>, defaults to an empty array.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <c>null</c>.</exception>
+        public DialogLine(string? speaker, string text, IReadOnlyList<string>? choices = null)
         {
-            Speaker = speaker ?? string.Empty;
-            Text = text ?? throw new ArgumentNullException(nameof(text));
-            Choices = choices ?? Array.Empty<string>();
+            this.Speaker = speaker ?? string.Empty;
+            this.Text = text ?? throw new ArgumentNullException(nameof(text));
+            this.Choices = choices ?? Array.Empty<string>();
         }
     }
 }

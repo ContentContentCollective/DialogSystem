@@ -1,0 +1,16 @@
+{
+    "dotnet.defaultSolution": "DialogSystem.slnx",
+    "files.exclude": {
+        "**/*.meta": true,
+        "**/bin": true,
+        "**/obj": true
+    },
+    "search.exclude": {
+        "**/*.meta": true,
+        "**/bin": true,
+        "**/obj": true,
+        "Demos/Unity/Library": true,
+        "Demos/Unity/Temp": true,
+        "Documentation/_site": true
+    }
+}

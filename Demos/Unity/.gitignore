@@ -15,6 +15,7 @@
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.tmp
 *.pidb.meta
 *.pdb.meta

@@ -1,0 +1,46 @@
+name: Release Unified UPM Package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish-upm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Validate Pure C# Build & Unit Tests
+        run: dotnet test DialogSystem.slnx --configuration Release
+
+      - name: Assemble Unified UPM Package
+        run: |
+          mkdir -p /tmp/upm-release
+          cp -r Source/ContentContent.Dialog.Unity/* /tmp/upm-release/
+          mkdir -p /tmp/upm-release/Runtime/Core
+          cp -r Source/ContentContent.Dialog/* /tmp/upm-release/Runtime/Core/
+          rm -f /tmp/upm-release/Runtime/Core/*.csproj
+          rm -f /tmp/upm-release/Runtime/Core/package.json
+          cp LICENSE /tmp/upm-release/
+          cp README.md /tmp/upm-release/
+
+      - name: Publish to orphan upm branch
+        run: |
+          cd /tmp/upm-release
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b upm
+          git add -A
+          git commit -m "chore(release): publish UPM package ${GITHUB_REF_NAME}"
+          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" upm:upm

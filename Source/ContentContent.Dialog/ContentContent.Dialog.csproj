@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>ContentContent.Dialog</RootNamespace>
+    <AssemblyName>ContentContent.Dialog</AssemblyName>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ContentContent.Dialog.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="**\*.meta" />
+    <None Remove="**\*.asmdef" />
+    <None Remove="package.json" />
+  </ItemGroup>
+
+</Project>

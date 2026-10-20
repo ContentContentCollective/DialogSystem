@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ContentContent.Dialog.Core.Interfaces;
-using ContentContent.Dialog.Core.Models;
+using ContentContent.Dialog;
+using ContentContent.Dialog.Ports;
 
 namespace ConsoleDemo.Adapters
 {
@@ -9,40 +9,41 @@ namespace ConsoleDemo.Adapters
     /// Renders the dialog data to the standard console output.
     /// Implements atomic data binding to manage screen redrawing and history trimming deterministically.
     /// </summary>
-    public class ConsoleDialogView : IDialogView
+    public sealed class ConsoleDialogView : IDialogView
     {
-        private const int MaxHistoryLines = 100; // Maximum number of lines to retain in the history buffer
-        private readonly ConsoleInputProvider _inputProvider;
-        private readonly List<(string Dialog, string Choice)> _historyBuffer;
+        private const int MaxHistoryLines = 100;
 
-        private DialogLine _activeLine;
-        private string _lastSelectedChoiceText;
+        private readonly ConsoleInputProvider inputProvider;
+        private readonly List<(string Dialog, string? Choice)> historyBuffer;
 
-        private bool _isLayoutRendered;
-        private bool _isChoicesRendered;
+        private DialogLine activeLine;
+        private string? lastSelectedChoiceText;
 
-        private (int X, int Y) _textStartPosition;
-        private (int X, int Y) _choiceStartPosition;
-        private int _currentChoiceIndex = 0;
+        private bool isLayoutRendered;
+        private bool isChoicesRendered;
+
+        private (int X, int Y) textStartPosition;
+        private (int X, int Y) choiceStartPosition;
+        private int currentChoiceIndex;
 
         /// <summary>
         /// Occurs when a choice is selected via keyboard input.
         /// </summary>
-        public event Action<int> ChoiceSelected;
+        public event Action<int>? ChoiceSelected;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsoleDialogView"/> class.
         /// </summary>
         /// <param name="inputProvider">The input provider used to capture choice navigation.</param>
-        /// <exception cref="ArgumentNullException">Thrown if the input provider is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="inputProvider"/> is <c>null</c>.</exception>
         public ConsoleDialogView(ConsoleInputProvider inputProvider)
         {
-            _inputProvider = inputProvider ?? throw new ArgumentNullException(nameof(inputProvider));
-            _historyBuffer = new List<(string Dialog, string Choice)>();
+            this.inputProvider = inputProvider ?? throw new ArgumentNullException(nameof(inputProvider));
+            this.historyBuffer = new List<(string Dialog, string? Choice)>();
 
-            _inputProvider.SelectRequested += HandleSelection;
-            _inputProvider.NavigateNextRequested += HandleNavigateNext;
-            _inputProvider.NavigatePreviousRequested += HandleNavigatePrevious;
+            this.inputProvider.SelectRequested += this.HandleSelection;
+            this.inputProvider.NavigateNextRequested += this.HandleNavigateNext;
+            this.inputProvider.NavigatePreviousRequested += this.HandleNavigatePrevious;
         }
 
         /// <summary>
@@ -64,39 +65,38 @@ namespace ConsoleDemo.Adapters
         }
 
         /// <summary>
-        /// Atomically binds the new payload, instantly archiving the previous turn's state 
+        /// Atomically binds the new payload, instantly archiving the previous turn's state
         /// and blocking input until the visual layout is explicitly executed.
         /// </summary>
         /// <param name="line">The immutable dialog payload for the current turn.</param>
         public void BindLine(DialogLine line)
         {
-            // Archive the previous state before overwriting it with the new payload
-            ArchiveCurrentLine();
+            this.ArchiveCurrentLine();
 
-            _activeLine = line;
-            _currentChoiceIndex = 0;
+            this.activeLine = line;
+            this.currentChoiceIndex = 0;
 
-            _isLayoutRendered = false;
-            _isChoicesRendered = false;
+            this.isLayoutRendered = false;
+            this.isChoicesRendered = false;
         }
 
         /// <summary>
-        /// Trims history to fit the window, redraws the screen via Console.Clear(), 
+        /// Trims history to fit the window, redraws the screen via <see cref="Console.Clear"/>,
         /// and renders the active speaker name.
         /// </summary>
         public void RenderStaticLayout()
         {
-            RedrawHistoryAndLayout();
+            this.RedrawHistoryAndLayout();
 
-            if (!string.IsNullOrWhiteSpace(_activeLine.Speaker))
+            if (!string.IsNullOrWhiteSpace(this.activeLine.Speaker))
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write($"{_activeLine.Speaker}: ");
+                Console.Write($"{this.activeLine.Speaker}: ");
                 Console.ResetColor();
             }
 
-            _textStartPosition = Console.GetCursorPosition();
-            _isLayoutRendered = true;
+            this.textStartPosition = Console.GetCursorPosition();
+            this.isLayoutRendered = true;
         }
 
         /// <summary>
@@ -105,18 +105,18 @@ namespace ConsoleDemo.Adapters
         /// <param name="visibleCharacters">The number of visible characters to reveal.</param>
         public void RevealCharacters(int visibleCharacters)
         {
-            if (!_isLayoutRendered)
+            if (!this.isLayoutRendered)
             {
-                RenderStaticLayout();
+                this.RenderStaticLayout();
             }
 
-            Console.SetCursorPosition(_textStartPosition.X, _textStartPosition.Y);
+            Console.SetCursorPosition(this.textStartPosition.X, this.textStartPosition.Y);
 
-            string visibleSubstring = string.IsNullOrEmpty(_activeLine.Text)
+            string visibleSubstring = string.IsNullOrEmpty(this.activeLine.Text)
                 ? string.Empty
-                : _activeLine.Text.Substring(0, visibleCharacters);
+                : this.activeLine.Text.Substring(0, visibleCharacters);
 
-            int paddingLength = Math.Max(0, Console.WindowWidth - _textStartPosition.X - 1);
+            int paddingLength = Math.Max(0, Console.WindowWidth - this.textStartPosition.X - 1);
             Console.Write(visibleSubstring.PadRight(paddingLength));
         }
 
@@ -125,16 +125,16 @@ namespace ConsoleDemo.Adapters
         /// </summary>
         public void RenderChoices()
         {
-            if (!_activeLine.HasChoices)
+            if (!this.activeLine.HasChoices)
             {
                 return;
             }
 
             Console.WriteLine();
-            _choiceStartPosition = Console.GetCursorPosition();
-            _isChoicesRendered = true; // Unblock directional and selection inputs
+            this.choiceStartPosition = Console.GetCursorPosition();
+            this.isChoicesRendered = true;
 
-            DrawChoices();
+            this.DrawChoices();
         }
 
         /// <summary>
@@ -142,19 +142,16 @@ namespace ConsoleDemo.Adapters
         /// </summary>
         private void ArchiveCurrentLine()
         {
-            // If the struct is default (empty), do not archive it.
-            if (string.IsNullOrWhiteSpace(_activeLine.Text))
+            if (string.IsNullOrWhiteSpace(this.activeLine.Text))
             {
                 return;
             }
 
-            string prefix = string.IsNullOrWhiteSpace(_activeLine.Speaker) ? string.Empty : $"{_activeLine.Speaker}: ";
-            string dialogLine = $"{prefix}{_activeLine.Text}";
+            string prefix = string.IsNullOrWhiteSpace(this.activeLine.Speaker) ? string.Empty : $"{this.activeLine.Speaker}: ";
+            string dialogLine = $"{prefix}{this.activeLine.Text}";
 
-            _historyBuffer.Add((dialogLine, _lastSelectedChoiceText));
-
-            // Clear the choice state for the next turn
-            _lastSelectedChoiceText = null;
+            this.historyBuffer.Add((dialogLine, this.lastSelectedChoiceText));
+            this.lastSelectedChoiceText = null;
         }
 
         /// <summary>
@@ -165,13 +162,12 @@ namespace ConsoleDemo.Adapters
             Console.Clear();
             Console.SetCursorPosition(0, 0);
 
-            // Trim oldest history until the remaining entries fit the available height
-            while (CalculateTotalHistoryHeight() > MaxHistoryLines && _historyBuffer.Count > 0)
+            while (this.CalculateTotalHistoryHeight() > MaxHistoryLines && this.historyBuffer.Count > 0)
             {
-                _historyBuffer.RemoveAt(0);
+                this.historyBuffer.RemoveAt(0);
             }
 
-            foreach ((string dialog, string choice) in _historyBuffer)
+            foreach ((string dialog, string? choice) in this.historyBuffer)
             {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine(dialog);
@@ -184,21 +180,21 @@ namespace ConsoleDemo.Adapters
 
             Console.ResetColor();
 
-            if (_historyBuffer.Count > 0)
+            if (this.historyBuffer.Count > 0)
             {
-                Console.WriteLine(); // Visual separation before the new active node
+                Console.WriteLine();
             }
         }
 
         /// <summary>
-        /// Calculates the total vertical rows required to render the current history buffer, 
+        /// Calculates the total vertical rows required to render the current history buffer,
         /// accounting for potential word-wrapping in standard terminals.
         /// </summary>
         private int CalculateTotalHistoryHeight()
         {
             int totalLines = 0;
 
-            foreach ((string dialog, string choice) in _historyBuffer)
+            foreach ((string dialog, string? choice) in this.historyBuffer)
             {
                 totalLines += (dialog.Length / Math.Max(1, Console.WindowWidth)) + 1;
 
@@ -216,16 +212,16 @@ namespace ConsoleDemo.Adapters
         /// </summary>
         private void DrawChoices()
         {
-            if (!_isChoicesRendered || !_activeLine.HasChoices)
+            if (!this.isChoicesRendered || !this.activeLine.HasChoices)
             {
                 return;
             }
 
-            Console.SetCursorPosition(_choiceStartPosition.X, _choiceStartPosition.Y);
+            Console.SetCursorPosition(this.choiceStartPosition.X, this.choiceStartPosition.Y);
 
-            for (int i = 0; i < _activeLine.Choices.Count; i++)
+            for (int i = 0; i < this.activeLine.Choices.Count; i++)
             {
-                if (i == _currentChoiceIndex)
+                if (i == this.currentChoiceIndex)
                 {
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Black;
@@ -236,55 +232,53 @@ namespace ConsoleDemo.Adapters
                     Console.ForegroundColor = ConsoleColor.Gray;
                 }
 
-                Console.Write($"[{_activeLine.Choices[i]}] ");
+                Console.Write($"[{this.activeLine.Choices[i]}] ");
                 Console.ResetColor();
             }
 
-            // Overwrite any remaining trailing artifacts on the choice line
-            Console.Write("".PadRight(Math.Max(0, Console.WindowWidth - Console.CursorLeft)));
+            Console.Write(string.Empty.PadRight(Math.Max(0, Console.WindowWidth - Console.CursorLeft)));
         }
 
         private void HandleSelection()
         {
-            if (!_isChoicesRendered)
+            if (!this.isChoicesRendered)
             {
                 return;
             }
 
-            if (_activeLine.HasChoices && _currentChoiceIndex >= 0 && _currentChoiceIndex < _activeLine.Choices.Count)
+            if (this.activeLine.HasChoices && this.currentChoiceIndex >= 0 && this.currentChoiceIndex < this.activeLine.Choices.Count)
             {
-                _lastSelectedChoiceText = _activeLine.Choices[_currentChoiceIndex];
+                this.lastSelectedChoiceText = this.activeLine.Choices[this.currentChoiceIndex];
 
-                // Instantly swap the rendered choices back to normal coloring to provide visual feedback
-                Console.SetCursorPosition(_choiceStartPosition.X, _choiceStartPosition.Y);
+                Console.SetCursorPosition(this.choiceStartPosition.X, this.choiceStartPosition.Y);
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write($"> {_lastSelectedChoiceText}".PadRight(Console.WindowWidth));
+                Console.Write($"> {this.lastSelectedChoiceText}".PadRight(Console.WindowWidth));
                 Console.ResetColor();
 
-                ChoiceSelected?.Invoke(_currentChoiceIndex);
+                this.ChoiceSelected?.Invoke(this.currentChoiceIndex);
             }
         }
 
         private void HandleNavigateNext()
         {
-            if (!_isChoicesRendered || !_activeLine.HasChoices)
+            if (!this.isChoicesRendered || !this.activeLine.HasChoices)
             {
                 return;
             }
 
-            _currentChoiceIndex = (_currentChoiceIndex + 1) % _activeLine.Choices.Count;
-            DrawChoices();
+            this.currentChoiceIndex = (this.currentChoiceIndex + 1) % this.activeLine.Choices.Count;
+            this.DrawChoices();
         }
 
         private void HandleNavigatePrevious()
         {
-            if (!_isChoicesRendered || !_activeLine.HasChoices)
+            if (!this.isChoicesRendered || !this.activeLine.HasChoices)
             {
                 return;
             }
 
-            _currentChoiceIndex = (_currentChoiceIndex - 1 + _activeLine.Choices.Count) % _activeLine.Choices.Count;
-            DrawChoices();
+            this.currentChoiceIndex = (this.currentChoiceIndex - 1 + this.activeLine.Choices.Count) % this.activeLine.Choices.Count;
+            this.DrawChoices();
         }
     }
 }

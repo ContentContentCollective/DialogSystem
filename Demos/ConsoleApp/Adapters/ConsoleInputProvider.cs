@@ -1,52 +1,52 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ContentContent.Dialog.Core.Interfaces;
+using ContentContent.Dialog.Ports;
 
 namespace ConsoleDemo.Adapters
 {
     /// <summary>
-    /// Polls the console input on a background thread to raise interaction events 
+    /// Polls the console input on a background thread to raise interaction events
     /// without blocking the asynchronous typewriter loop.
     /// </summary>
-    public class ConsoleInputProvider : IDialogInputProvider
+    public sealed class ConsoleInputProvider : IDialogInputProvider
     {
-        private CancellationTokenSource _inputCancellationTokenSource;
+        private CancellationTokenSource? inputCancellationTokenSource;
 
         /// <summary>
         /// Occurs when the user requests to advance the dialog.
         /// </summary>
-        public event Action AdvanceRequested;
-        
+        public event Action? AdvanceRequested;
+
         /// <summary>
         /// Occurs when the user selects a highlighted choice.
         /// </summary>
-        public event Action SelectRequested;
-        
+        public event Action? SelectRequested;
+
         /// <summary>
         /// Occurs when the user navigates to the next choice.
         /// </summary>
-        public event Action NavigateNextRequested;
-        
+        public event Action? NavigateNextRequested;
+
         /// <summary>
         /// Occurs when the user navigates to the previous choice.
         /// </summary>
-        public event Action NavigatePreviousRequested;
+        public event Action? NavigatePreviousRequested;
 
         /// <summary>
         /// Enables background input listening.
         /// </summary>
         public void Enable()
         {
-            if (_inputCancellationTokenSource != null)
+            if (this.inputCancellationTokenSource != null)
             {
                 return;
             }
 
-            _inputCancellationTokenSource = new CancellationTokenSource();
-            CancellationToken token = _inputCancellationTokenSource.Token;
+            this.inputCancellationTokenSource = new CancellationTokenSource();
+            CancellationToken token = this.inputCancellationTokenSource.Token;
 
-            Task.Run(() => ListenForInputAsync(token), token);
+            Task.Run(() => this.ListenForInputAsync(token), token);
         }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace ConsoleDemo.Adapters
         /// </summary>
         public void Disable()
         {
-            if (_inputCancellationTokenSource != null)
+            if (this.inputCancellationTokenSource != null)
             {
-                _inputCancellationTokenSource.Cancel();
-                _inputCancellationTokenSource.Dispose();
-                _inputCancellationTokenSource = null;
+                this.inputCancellationTokenSource.Cancel();
+                this.inputCancellationTokenSource.Dispose();
+                this.inputCancellationTokenSource = null;
             }
         }
 
@@ -67,7 +67,7 @@ namespace ConsoleDemo.Adapters
         /// </summary>
         public void Dispose()
         {
-            Disable();
+            this.Disable();
         }
 
         private async Task ListenForInputAsync(CancellationToken token)
@@ -82,21 +82,19 @@ namespace ConsoleDemo.Adapters
 
                         if (keyInfo.Key == ConsoleKey.Spacebar || keyInfo.Key == ConsoleKey.Enter)
                         {
-                            AdvanceRequested?.Invoke();
-                            SelectRequested?.Invoke();
+                            this.AdvanceRequested?.Invoke();
+                            this.SelectRequested?.Invoke();
                         }
                         else if (keyInfo.Key == ConsoleKey.UpArrow || keyInfo.Key == ConsoleKey.LeftArrow)
                         {
-                            NavigatePreviousRequested?.Invoke();
+                            this.NavigatePreviousRequested?.Invoke();
                         }
                         else if (keyInfo.Key == ConsoleKey.DownArrow || keyInfo.Key == ConsoleKey.RightArrow)
                         {
-                            NavigateNextRequested?.Invoke();
+                            this.NavigateNextRequested?.Invoke();
                         }
                     }
 
-                    // Delay polling to prevent CPU pegging. 
-                    // This throws OperationCanceledException when Disable() is called.
                     await Task.Delay(16, token);
                 }
             }

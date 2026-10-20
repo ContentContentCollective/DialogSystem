@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Source/">
+    <Project Path="Source/ContentContent.Dialog/ContentContent.Dialog.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ContentContent.Dialog.Tests/ContentContent.Dialog.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Demos/">
+    <Project Path="Demos/ConsoleApp/ConsoleApp.csproj" />
+  </Folder>
+</Solution>

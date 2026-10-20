@@ -1,0 +1,10 @@
+{
+  "name": "com.contentcontent.dialog.core",
+  "version": "0.1.0",
+  "displayName": "ContentContent Dialog Core (Internal Dev)",
+  "description": "Engine-agnostic pure C# core domain for the ContentContent Dialog System.",
+  "unity": "6000.5",
+  "author": {
+    "name": "Content Content Collective"
+  }
+}

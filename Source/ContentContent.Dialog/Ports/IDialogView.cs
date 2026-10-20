@@ -1,8 +1,6 @@
-using ContentContent.Dialog.Core.Models;
 using System;
-using System.Collections.Generic;
 
-namespace ContentContent.Dialog.Core.Interfaces
+namespace ContentContent.Dialog.Ports
 {
     /// <summary>
     /// Presentation contract for rendering dialog state following the Passive View (MVP) pattern.
@@ -13,7 +11,7 @@ namespace ContentContent.Dialog.Core.Interfaces
         /// <summary>
         /// Occurs when the user selects a choice button. Passes the zero-based index of the selected choice.
         /// </summary>
-        event Action<int> ChoiceSelected;
+        event Action<int>? ChoiceSelected;
 
         /// <summary>
         /// Displays the dialog view container on screen.
@@ -27,7 +25,7 @@ namespace ContentContent.Dialog.Core.Interfaces
 
         /// <summary>
         /// Atomically binds the complete dialog payload to the view.
-        /// This acts as the lifecycle trigger for the view to archive previous history, 
+        /// This acts as the lifecycle trigger for the view to archive previous history,
         /// clear stale choice data, and pre-calculate upcoming layout requirements.
         /// </summary>
         /// <param name="line">The immutable dialog payload for the current turn.</param>

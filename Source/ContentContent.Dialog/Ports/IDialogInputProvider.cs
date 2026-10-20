@@ -1,6 +1,6 @@
 using System;
 
-namespace ContentContent.Dialog.Core.Interfaces
+namespace ContentContent.Dialog.Ports
 {
     /// <summary>
     /// Abstracts user advancement and skip inputs.
@@ -11,7 +11,7 @@ namespace ContentContent.Dialog.Core.Interfaces
         /// <summary>
         /// Occurs when the user triggers the mapped dialog advancement input action.
         /// </summary>
-        event Action AdvanceRequested;
+        event Action? AdvanceRequested;
 
         /// <summary>
         /// Enables input listening and binds the necessary callbacks.

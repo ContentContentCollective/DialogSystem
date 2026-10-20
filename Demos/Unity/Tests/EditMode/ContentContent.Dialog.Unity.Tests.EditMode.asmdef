@@ -1,0 +1,27 @@
+{
+    "name": "ContentContent.Dialog.Unity.Tests.EditMode",
+    "rootNamespace": "ContentContent.Dialog.Unity.Tests.EditMode",
+    "references": [
+        "ContentContent.Dialog",
+        "ContentContent.Dialog.Unity",
+        "ContentContent.Dialog.Unity.Editor",
+        "Unity.InputSystem",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

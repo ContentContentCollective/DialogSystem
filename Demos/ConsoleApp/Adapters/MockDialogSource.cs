@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
-using ContentContent.Dialog.Core.Interfaces;
-using ContentContent.Dialog.Core.Models;
+using ContentContent.Dialog;
+using ContentContent.Dialog.Ports;
 
 namespace ConsoleDemo.Adapters
 {
     /// <summary>
     /// A temporary mock implementation of the narrative source supplying simple nodes for the demo.
-    /// Demonstrates the architectural boundary where raw node data is converted 
+    /// Demonstrates the architectural boundary where raw node data is converted
     /// into an immutable presentation payload, and where metadata/variables are evaluated.
     /// </summary>
-    public class MockDialogSource : IDialogSource
+    public sealed class MockDialogSource : IDialogSource
     {
-        private readonly IReadOnlyList<DialogNode> _nodes;
+        private readonly IReadOnlyList<DialogNode> nodes;
+        private readonly string userName;
 
-        private string _userName;
-        private int _currentNodeIndex = 0;
-        private int _activeNodeIndex = -1;
+        private int currentNodeIndex;
+        private int activeNodeIndex = -1;
 
         /// <summary>
         /// Gets a value indicating whether there is another node available to read.
@@ -25,25 +25,24 @@ namespace ConsoleDemo.Adapters
         {
             get
             {
-                return _currentNodeIndex != DialogNode.EndConversationIndex && _currentNodeIndex < _nodes.Count;
+                return this.currentNodeIndex != DialogNode.EndConversationIndex && this.currentNodeIndex < this.nodes.Count;
             }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MockDialogSource"/> class with dummy data.
         /// </summary>
+        /// <param name="userName">The player name substituted into variable placeholders.</param>
         public MockDialogSource(string userName = "???")
         {
-            _userName = userName;
-            _nodes = new List<DialogNode>
+            this.userName = string.IsNullOrWhiteSpace(userName) ? "???" : userName;
+            this.nodes = new List<DialogNode>
             {
-                // Node 0
                 new DialogNode(
                     speaker: "ContentContent",
                     text: "Welcome, {PlayerName}. Press Enter/Space to advance.",
                     nextNodeIndex: 1),
-                
-                // Node 1
+
                 new DialogNode(
                     speaker: "ContentContent",
                     text: "Here are some choices. Use the arrow keys to navigate and Enter/Space to select.",
@@ -55,20 +54,17 @@ namespace ConsoleDemo.Adapters
                         new DialogChoice("Restart this conversation.", 0),
                         new DialogChoice("End this conversation.", 4)
                     }),
-                    
-                // Node 2
+
                 new DialogNode(
                     speaker: "ContentContent",
                     text: "This is the result of selecting Choice 1.",
                     nextNodeIndex: 1),
-                
-                // Node 3
+
                 new DialogNode(
                     speaker: "ContentContent",
                     text: "This is the result of selecting Choice 2.",
                     nextNodeIndex: 1),
 
-                // Node 4
                 new DialogNode(
                     speaker: "ContentContent",
                     text: "Goodbye, {PlayerName}.",
@@ -77,42 +73,34 @@ namespace ConsoleDemo.Adapters
         }
 
         /// <summary>
-        /// Retrieves the active node, evaluates runtime state (metadata/variables), 
+        /// Retrieves the active node, evaluates runtime state (metadata/variables),
         /// and constructs the immutable presentation payload.
         /// </summary>
         /// <returns>The immutable line payload.</returns>
         /// <exception cref="InvalidOperationException">Thrown if attempting to read past the end of the graph.</exception>
         public DialogLine GetNextLine()
         {
-            if (!CanContinue)
+            if (!this.CanContinue)
             {
                 throw new InvalidOperationException("Attempted to read beyond the bounds of the dialog graph.");
             }
 
-            // Cache the active node so SelectChoice can reference its branching paths
-            _activeNodeIndex = _currentNodeIndex;
+            this.activeNodeIndex = this.currentNodeIndex;
 
-            DialogNode rawNode = _nodes[_currentNodeIndex];
-            _currentNodeIndex = rawNode.NextNodeIndex;
+            DialogNode rawNode = this.nodes[this.currentNodeIndex];
+            this.currentNodeIndex = rawNode.NextNodeIndex;
 
-            // ARCHITECTURAL BOUNDARY:
-            // 1. Evaluate Variables & Metadata
-            // In a production system, this queries your global game state or localization database.
-            string evaluatedText = rawNode.Text.Replace("{PlayerName}", _userName);
+            string evaluatedText = rawNode.Text.Replace("{PlayerName}", this.userName);
 
-            // 2. Evaluate & Filter Choices
             List<string> evaluatedChoices = new List<string>();
             if (rawNode.Choices != null)
             {
                 foreach (DialogChoice choice in rawNode.Choices)
                 {
-                    // If choices have condition IDs, evaluate them here. 
-                    // Only add the text if the condition passes, completely hiding locked paths from the View.
                     evaluatedChoices.Add(choice.Text);
                 }
             }
 
-            // 3. Construct and return the immutable DTO
             return new DialogLine(rawNode.Speaker, evaluatedText, evaluatedChoices);
         }
 
@@ -122,19 +110,16 @@ namespace ConsoleDemo.Adapters
         /// <param name="choiceIndex">The index of the selected choice.</param>
         public void SelectChoice(int choiceIndex)
         {
-            if (_activeNodeIndex == DialogNode.EndConversationIndex || _activeNodeIndex >= _nodes.Count)
+            if (this.activeNodeIndex == DialogNode.EndConversationIndex || this.activeNodeIndex >= this.nodes.Count)
             {
                 return;
             }
 
-            DialogNode activeNode = _nodes[_activeNodeIndex];
+            DialogNode activeNode = this.nodes[this.activeNodeIndex];
 
-            // Because GetNextLine() filtered choices, you must ensure the choiceIndex 
-            // maps correctly to the original raw choices if any were filtered out. 
-            // For this mock without conditionals, a direct 1:1 index map is safe.
             if (activeNode.Choices != null && choiceIndex >= 0 && choiceIndex < activeNode.Choices.Count)
             {
-                _currentNodeIndex = activeNode.Choices[choiceIndex].TargetNodeIndex;
+                this.currentNodeIndex = activeNode.Choices[choiceIndex].TargetNodeIndex;
             }
         }
     }

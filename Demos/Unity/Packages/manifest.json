@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "com.contentcontent.dialog.core": "file:../../../Source/ContentContent.Dialog",
+    "com.contentcontent.dialog": "file:../../../Source/ContentContent.Dialog.Unity",
     "com.unity.inputsystem": "1.20.1",
     "com.unity.render-pipelines.universal": "17.6.0",
     "com.unity.modules.ui": "1.0.0",

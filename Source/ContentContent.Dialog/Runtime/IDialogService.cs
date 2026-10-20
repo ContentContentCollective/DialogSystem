@@ -1,6 +1,7 @@
 using System;
+using ContentContent.Dialog.Ports;
 
-namespace ContentContent.Dialog.Core.Interfaces
+namespace ContentContent.Dialog
 {
     /// <summary>
     /// Top-level domain facade for starting, stopping, and observing dialog sessions.
@@ -11,12 +12,12 @@ namespace ContentContent.Dialog.Core.Interfaces
         /// <summary>
         /// Occurs when a dialog session starts.
         /// </summary>
-        event Action DialogStarted;
+        event Action? DialogStarted;
 
         /// <summary>
         /// Occurs when a dialog session ends or is stopped.
         /// </summary>
-        event Action DialogEnded;
+        event Action? DialogEnded;
 
         /// <summary>
         /// Gets a value indicating whether a dialog session is currently active.

@@ -1,0 +1,19 @@
+{
+  "name": "com.contentcontent.dialog",
+  "version": "0.1.0",
+  "displayName": "ContentContent Dialog System",
+  "description": "Modular, engine-agnostic dialog system with UI Toolkit and Input System adapters for Unity.",
+  "unity": "6000.5",
+  "keywords": [
+    "dialog",
+    "dialogue",
+    "narrative",
+    "uitoolkit"
+  ],
+  "author": {
+    "name": "Content Content Collective"
+  },
+  "dependencies": {
+    "com.unity.inputsystem": "1.11.2"
+  }
+}

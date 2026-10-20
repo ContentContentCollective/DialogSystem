@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ContentContent.Dialog.Core.Interfaces
+namespace ContentContent.Dialog.Ports
 {
     /// <summary>
     /// Abstracts the timing mechanism used for the typewriter effect.

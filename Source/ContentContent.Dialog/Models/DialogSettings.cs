@@ -1,6 +1,6 @@
 using System;
 
-namespace ContentContent.Dialog.Core.Models
+namespace ContentContent.Dialog
 {
     /// <summary>
     /// Immutable domain configuration defining typewriter cadence and input skip rules.
@@ -49,8 +49,8 @@ namespace ContentContent.Dialog.Core.Models
             float secondsPerCharacter = DefaultSecondsPerCharacter,
             bool allowTypewriterSkip = DefaultAllowTypewriterSkip)
         {
-            SecondsPerCharacter = Math.Max(0f, secondsPerCharacter);
-            AllowTypewriterSkip = allowTypewriterSkip;
+            this.SecondsPerCharacter = Math.Max(0f, secondsPerCharacter);
+            this.AllowTypewriterSkip = allowTypewriterSkip;
         }
     }
 }

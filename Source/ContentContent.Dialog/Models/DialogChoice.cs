@@ -1,6 +1,6 @@
 using System;
 
-namespace ContentContent.Dialog.Core.Models
+namespace ContentContent.Dialog
 {
   /// <summary>
   /// Immutable routing entry pairing a localized choice label with its target node index in a dialog graph.
@@ -27,8 +27,8 @@ namespace ContentContent.Dialog.Core.Models
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <c>null</c>.</exception>
     public DialogChoice(string text, int targetNodeIndex)
     {
-      Text = text ?? throw new ArgumentNullException(nameof(text));
-      TargetNodeIndex = targetNodeIndex;
+      this.Text = text ?? throw new ArgumentNullException(nameof(text));
+      this.TargetNodeIndex = targetNodeIndex;
     }
   }
 }

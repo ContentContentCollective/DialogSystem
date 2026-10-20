@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ContentContent.Dialog.Core.Models
+namespace ContentContent.Dialog
 {
     /// <summary>
     /// Engine-agnostic graph node representing a single step in a branching conversation.
@@ -15,10 +15,10 @@ namespace ContentContent.Dialog.Core.Models
         /// </summary>
         public const int EndConversationIndex = -1;
 
-        private readonly string _speaker;
-        private readonly string _text;
-        private readonly int _nextNodeIndex;
-        private readonly IReadOnlyList<DialogChoice> _choices;
+        private readonly string speaker;
+        private readonly string text;
+        private readonly int nextNodeIndex;
+        private readonly IReadOnlyList<DialogChoice> choices;
 
         /// <summary>
         /// Gets the speaker name for this node. Guaranteed non-null.
@@ -27,7 +27,7 @@ namespace ContentContent.Dialog.Core.Models
         {
             get
             {
-                return _speaker ?? string.Empty;
+                return this.speaker ?? string.Empty;
             }
         }
 
@@ -38,7 +38,7 @@ namespace ContentContent.Dialog.Core.Models
         {
             get
             {
-                return _text ?? string.Empty;
+                return this.text ?? string.Empty;
             }
         }
 
@@ -49,7 +49,7 @@ namespace ContentContent.Dialog.Core.Models
         {
             get
             {
-                return _nextNodeIndex;
+                return this.nextNodeIndex;
             }
         }
 
@@ -60,7 +60,7 @@ namespace ContentContent.Dialog.Core.Models
         {
             get
             {
-                return _choices ?? Array.Empty<DialogChoice>();
+                return this.choices ?? Array.Empty<DialogChoice>();
             }
         }
 
@@ -73,15 +73,15 @@ namespace ContentContent.Dialog.Core.Models
         /// <param name="choices">Optional collection of branching choices for this node.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <c>null</c>.</exception>
         public DialogNode(
-            string speaker,
+            string? speaker,
             string text,
             int nextNodeIndex = EndConversationIndex,
-            IReadOnlyList<DialogChoice> choices = null)
+            IReadOnlyList<DialogChoice>? choices = null)
         {
-            _speaker = speaker ?? string.Empty;
-            _text = text ?? throw new ArgumentNullException(nameof(text));
-            _nextNodeIndex = nextNodeIndex;
-            _choices = choices ?? Array.Empty<DialogChoice>();
+            this.speaker = speaker ?? string.Empty;
+            this.text = text ?? throw new ArgumentNullException(nameof(text));
+            this.nextNodeIndex = nextNodeIndex;
+            this.choices = choices ?? Array.Empty<DialogChoice>();
         }
     }
 }

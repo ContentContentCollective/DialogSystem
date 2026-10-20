@@ -1,7 +1,6 @@
-using ContentContent.Dialog.Core.Models;
 using System;
 
-namespace ContentContent.Dialog.Core.Interfaces
+namespace ContentContent.Dialog.Ports
 {
     /// <summary>
     /// Abstracts the narrative data stream from the core presentation orchestrator.
@@ -11,16 +10,16 @@ namespace ContentContent.Dialog.Core.Interfaces
     {
         /// <summary>
         /// Gets a value indicating whether the dialog source has a valid next node ready to be read.
-        /// Returns false when the conversation reaches its end or is waiting for <see cref="SelectChoice"/> to be called.
+        /// Returns <c>false</c> when the conversation reaches its end or is waiting for <see cref="SelectChoice"/> to be called.
         /// </summary>
         bool CanContinue { get; }
 
         /// <summary>
-        /// Retrieves the next line of dialog, evaluates any internal variables/conditions, 
+        /// Retrieves the next line of dialog, evaluates any internal variables/conditions,
         /// and advances the internal narrative cursor.
         /// </summary>
         /// <returns>The immutable <see cref="DialogLine"/> payload for the current turn.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when <see cref="CanContinue"/> is false.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="CanContinue"/> is <c>false</c>.</exception>
         DialogLine GetNextLine();
 
         /// <summary>
