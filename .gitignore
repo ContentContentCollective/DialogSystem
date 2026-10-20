@@ -1,4 +1,5 @@
-# .NET & MSBuild Build Artifacts
+# Centralized .NET & MSBuild Build Artifacts
+.artifacts/
 **/[Bb]in/
 **/[Oo]bj/
 **/[Oo]ut/

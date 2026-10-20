@@ -1,0 +1,18 @@
+{
+    "name": "ContentContent.Dialog.Demo",
+    "rootNamespace": "ContentContent.Dialog.Demo",
+    "references": [
+        "ContentContent.Dialog",
+        "ContentContent.Dialog.Unity",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

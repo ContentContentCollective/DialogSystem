@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703ddbc3f4adbe54bb9e5ade49152c65, type: 3}
+  m_Name: SampleConversation
+  m_EditorClassIdentifier: ContentContent.Dialog.Unity::ContentContent.Dialog.Unity.DialogAsset
+  nodes:
+  - speaker: ContentContent
+    text: '"Welcome, {PlayerName}. Press Enter/Space to advance."'
+    nextNodeIndex: 1
+    choices: []
+  - speaker: ContentContent
+    text: '"Here are some choices. Use the arrow keys to navigate and Enter/Space
+      to select."'
+    nextNodeIndex: 0
+    choices:
+    - text: Choice 1
+      targetNodeIndex: 2
+    - text: Choice 2
+      targetNodeIndex: 3
+    - text: Restart this conversation.
+      targetNodeIndex: 0
+    - text: End this conversation.
+      targetNodeIndex: 4
+  - speaker: ContentContent
+    text: This is the result of selecting Choice 1.
+    nextNodeIndex: 1
+    choices: []
+  - speaker: ContentContent
+    text: This is the result of selecting Choice 2.
+    nextNodeIndex: 1
+    choices: []
+  - speaker: ContentContent
+    text: Goodbye, {PlayerName}.
+    nextNodeIndex: -1
+    choices: []

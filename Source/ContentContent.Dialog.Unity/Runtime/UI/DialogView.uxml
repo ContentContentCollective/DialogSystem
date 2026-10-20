@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="dialog-container" class="dialog-container">
+        <ui:VisualElement name="dialog-box" class="dialog-box">
+            <ui:VisualElement name="dialog-speaker-container" class="dialog-speaker-container">
+                <ui:Label name="dialog-speaker-label" text="Speaker" class="dialog-speaker-label" />
+                        </ui:VisualElement>
+            <ui:Label name="dialog-body-label" text="Dialog text goes here..." class="dialog-body-label" />
+            <ui:VisualElement name="dialog-choices-container" class="dialog-choices-container" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

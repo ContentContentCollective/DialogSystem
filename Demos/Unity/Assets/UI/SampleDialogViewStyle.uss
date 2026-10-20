@@ -1,0 +1,62 @@
+.dialog-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 32px;
+}
+
+.dialog-box {
+    width: 80%;
+    max-width: 1100px;
+    min-height: 180px;
+    background-color: rgba(24, 24, 28, 0.94);
+    border-color: rgb(92, 92, 108);
+    border-width: 2px;
+    border-radius: 8px;
+    padding: 24px;
+    flex-direction: column;
+}
+
+.dialog-speaker-container {
+    margin-bottom: 8px;
+}
+
+.dialog-speaker-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(235, 203, 139);
+}
+
+.dialog-body-label {
+    font-size: 18px;
+    color: rgb(236, 239, 244);
+    white-space: normal;
+    flex-grow: 1;
+}
+
+.dialog-choices-container {
+    margin-top: 16px;
+    flex-direction: column;
+}
+
+.dialog-choice-button {
+    margin-top: 6px;
+    padding: 10px 16px;
+    background-color: rgba(46, 52, 64, 0.9);
+    border-color: rgb(129, 161, 193);
+    border-width: 1px;
+    border-radius: 4px;
+    color: rgb(236, 239, 244);
+    font-size: 16px;
+    -unity-text-align: middle-left;
+}
+
+.dialog-choice-button:hover,
+.dialog-choice-button:focus {
+    background-color: rgb(76, 86, 106);
+    border-color: rgb(235, 203, 139);
+}
