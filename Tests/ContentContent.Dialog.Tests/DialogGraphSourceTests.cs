@@ -25,18 +25,18 @@ namespace ContentContent.Dialog.Tests
             DialogGraphSource source = new DialogGraphSource(
                 nodes,
                 startNodeIndex: 0,
-                textProcessor: text => text.Replace("{User}", "Listener"));
+                textProcessor: text => text.Replace("{User}", "???"));
 
             source.CanContinue.Should().BeTrue();
             DialogLine line1 = source.GetNextLine();
             line1.Speaker.Should().Be("SpeakerA");
-            line1.Text.Should().Be("Hello Listener");
+            line1.Text.Should().Be("Hello ???");
             line1.HasChoices.Should().BeFalse();
 
             source.CanContinue.Should().BeTrue();
             DialogLine line2 = source.GetNextLine();
             line2.Speaker.Should().Be("SpeakerB");
-            line2.Text.Should().Be("Goodbye Listener");
+            line2.Text.Should().Be("Goodbye ???");
 
             source.CanContinue.Should().BeFalse();
         }
