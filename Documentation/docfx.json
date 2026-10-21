@@ -5,7 +5,8 @@
         {
           "src": "../Source",
           "files": [
-            "ContentContent.Dialog/ContentContent.Dialog.csproj"
+            "ContentContent.Dialog/ContentContent.Dialog.csproj",
+            "ContentContent.Dialog.Unity/Runtime/**/*.cs"
           ]
         }
       ],
@@ -15,7 +16,8 @@
       "disableDefaultFilter": false,
       "noRestore": false,
       "namespaceLayout": "flattened",
-      "memberLayout": "samePage"
+      "memberLayout": "samePage",
+      "allowCompilationErrors": true
     }
   ],
   "build": {
